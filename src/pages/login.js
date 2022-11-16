@@ -1,11 +1,40 @@
-import { Link } from "react-router-dom";
-
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+const url = "https://jsonplaceholder.typicode.com/posts";
 export default function Login() {
+  const [isDisabled, setIsDisabled] = useState(false);
+  const formRef = useRef();
+  const navigate = useNavigate();
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    setIsDisabled(true);
+    const formData = new FormData(formRef.current);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw "Request failed";
+      }
+      const data = await response.json();
+      console.log(data);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+    setIsDisabled(false);
+    navigate("/form");
+  };
   return (
     <main className="d-flex align-items-center justify-content-center">
       <section>
         <h4 className="text-center mb-4">Giriş</h4>
-        <form className="row row-cols-1 g-3 w-50 mx-auto">
+        <form
+          ref={formRef}
+          onSubmit={submitHandler}
+          className="row row-cols-1 g-3 w-50 mx-auto"
+        >
           <div className="col">
             <label htmlFor="name" className="form-label">
               Kullanıcı Adı
@@ -30,11 +59,15 @@ export default function Login() {
               className="form-control"
             />
           </div>
-          <Link to="/form" className="d-flex justify-content-center">
-            <button type="submit" className="btn btn-primary w-50">
+          <div className="col d-flex justify-content-center">
+            <button
+              disabled={isDisabled && true}
+              type="submit"
+              className="btn btn-primary w-50"
+            >
               Giriş
             </button>
-          </Link>
+          </div>
         </form>
       </section>
     </main>
