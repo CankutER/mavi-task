@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 const url = "https://jsonplaceholder.typicode.com/posts";
-export default function Login() {
+export default function Login({ setInfo }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const formRef = useRef();
+  const userRef = useRef();
   const navigate = useNavigate();
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -23,7 +24,13 @@ export default function Login() {
     } catch (err) {
       console.log(err);
     }
+    const date = new Date();
     setIsDisabled(false);
+    setInfo({
+      id: userRef.current.value,
+      time: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`,
+    });
+
     navigate("/form");
   };
   return (
@@ -40,6 +47,7 @@ export default function Login() {
               Kullanıcı Adı
             </label>
             <input
+              ref={userRef}
               type="text"
               required
               name="name"
