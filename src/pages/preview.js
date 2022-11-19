@@ -1,7 +1,15 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 export default function Preview({ formState, info }) {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const user = localStorage.getItem("user");
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+      return;
+    }
+  }, []);
   return (
     <main className="row container-fluid mx-0 justify-content-center  ">
       <article className="align-self-end ">

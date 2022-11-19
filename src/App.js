@@ -11,7 +11,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login setInfo={setInfo} />} />
+        <Route path="/" element={<Login setInfo={setInfo} info={info} />} />
         <Route
           path="form"
           element={<Form setForm={setForm} info={info} formState={formState} />}

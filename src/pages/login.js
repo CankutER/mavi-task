@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 const url = "https://jsonplaceholder.typicode.com/posts";
-export default function Login({ setInfo }) {
+
+export default function Login({ setInfo, info }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const formRef = useRef();
   const userRef = useRef();
@@ -30,8 +31,8 @@ export default function Login({ setInfo }) {
       id: userRef.current.value,
       time: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`,
     });
-
-    navigate("/form");
+    localStorage.setItem("user", userRef.current.value);
+    navigate("/form", { replace: true });
   };
   return (
     <main className="d-flex align-items-center justify-content-center">
