@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Preview({ formState, info }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const user = localStorage.getItem("user");
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
   useEffect(() => {
-    if (!user) {
+    console.log(loginInfo);
+    if (!loginInfo) {
       navigate("/");
       return;
     }
@@ -67,8 +69,8 @@ export default function Preview({ formState, info }) {
 
       <div className="col-12 p-0 align-self-end">
         <aside className="ms-4">
-          <p>Kullanıcı Adı: {info.id}</p>
-          <p>Giriş Tarihi: {info.time}</p>
+          <p>Kullanıcı Adı: {loginInfo.id}</p>
+          <p>Giriş Tarihi: {loginInfo.time}</p>
         </aside>
       </div>
     </main>

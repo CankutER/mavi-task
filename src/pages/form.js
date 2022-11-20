@@ -2,18 +2,23 @@ import { useNavigate } from "react-router-dom";
 import cities from "../utilities/cities";
 import zones from "../utilities/zones";
 import decimalize from "../utilities/decimalize";
-import { useEffect } from "react";
-export default function Form({ info, setForm, formState }) {
+import { useEffect, useState } from "react";
+import fetchProvince from "../utilities/fetchProvince";
+export default function Form({ setForm, formState }) {
   const navigate = useNavigate();
-  const user = localStorage.getItem("user");
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  const provinceUrl = "https://turkiyeapi.cyclic.app/api/v1/provinces";
+  const [provinces, setProvinces] = useState([]);
+  const [isProvince, setIsProvince] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!loginInfo) {
       navigate("/");
       return;
     }
   }, []);
   const inputHandler = (e) => {
+    console.log(formState);
     if (e.target.name === "population") {
       if (
         !Number(
@@ -50,6 +55,18 @@ export default function Form({ info, setForm, formState }) {
         return;
       }
     }
+
+    // FETCH DISTRICTS BASED ON SELECTED CITY
+    if (e.target.name === "cities") {
+      const lowerCased = e.target.value.toLowerCase();
+      const query = `${provinceUrl}?name=${lowerCased}`;
+      setIsProvince(false);
+      fetchProvince(query)
+        .then((value) => setProvinces(value))
+        .catch((err) => console.log(err))
+        .then(() => setIsProvince(true));
+    }
+    //
     setForm({ ...formState, [e.target.name]: e.target.value });
   };
   const submitHandler = () => {
@@ -68,6 +85,7 @@ export default function Form({ info, setForm, formState }) {
             </label>
             <select
               name="cities"
+              required
               id="cities"
               onChange={inputHandler}
               value={formState.cities}
@@ -77,7 +95,6 @@ export default function Form({ info, setForm, formState }) {
                 return (
                   <option
                     value={i === 0 ? "" : city}
-                    required
                     hidden={i === 0 ? true : false}
                     selected={i === 0 ? true : false}
                     key={i}
@@ -92,16 +109,39 @@ export default function Form({ info, setForm, formState }) {
             <label className="form-label" htmlFor="province">
               İlçe
             </label>
-            <input
+            {/* text type */}
+            {/* <input
               type="text"
               required
               name="province"
               id="province"
               className="form-control"
-              maxLength={35}
+              maxLength={50}
               onChange={inputHandler}
               value={formState.province}
-            />
+            /> */}
+            {/*  */}
+
+            {/* select type */}
+            <select
+              name="province"
+              placeholder="Seçim Yapınız"
+              id="province"
+              className="form-select"
+              value={formState.province}
+              onChange={inputHandler}
+              disabled={!isProvince}
+            >
+              {provinces &&
+                provinces.map((province, i) => {
+                  return (
+                    <option key={i} value={province}>
+                      {province}
+                    </option>
+                  );
+                })}
+            </select>
+            {/*  */}
           </div>
           <div className="col-lg-6">
             <label htmlFor="plate" className="form-label">
@@ -165,8 +205,8 @@ export default function Form({ info, setForm, formState }) {
       </div>
       <div className="col-12 p-0 align-self-end">
         <aside className="ms-4">
-          <p>Kullanıcı Adı: {info.id}</p>
-          <p>Giriş Tarihi: {info.time}</p>
+          <p>Kullanıcı Adı: {loginInfo.id}</p>
+          <p>Giriş Tarihi: {loginInfo.time}</p>
         </aside>
       </div>
     </main>
