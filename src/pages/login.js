@@ -2,9 +2,10 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 const url = "https://jsonplaceholder.typicode.com/posts";
 
-export default function Login({ setInfo, info }) {
+export default function Login() {
   const [isDisabled, setIsDisabled] = useState(false);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
   const formRef = useRef();
   const userRef = useRef();
   const navigate = useNavigate();

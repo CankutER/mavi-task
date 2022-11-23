@@ -7,18 +7,25 @@ import { useState } from "react";
 
 function App() {
   const [formState, setForm] = useState({});
-  const [info, setInfo] = useState({});
+  const [list, setList] = useState([]);
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login setInfo={setInfo} info={info} />} />
+        <Route path="/" element={<Login />} />
         <Route
           path="form"
-          element={<Form setForm={setForm} info={info} formState={formState} />}
+          element={
+            <Form
+              setForm={setForm}
+              setList={setList}
+              list={list}
+              formState={formState}
+            />
+          }
         />
         <Route
           path="preview"
-          element={<Preview formState={formState} info={info} />}
+          element={<Preview formState={formState} list={list} />}
         />
       </Routes>
     </BrowserRouter>

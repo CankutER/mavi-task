@@ -4,9 +4,10 @@ import zones from "../utilities/zones";
 import decimalize from "../utilities/decimalize";
 import { useEffect, useState } from "react";
 import fetchProvince from "../utilities/fetchProvince";
-export default function Form({ setForm, formState }) {
+export default function Form({ setForm, formState, list, setList }) {
   const navigate = useNavigate();
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
   const provinceUrl = "https://turkiyeapi.cyclic.app/api/v1/provinces";
   const [provinces, setProvinces] = useState([]);
   const [isProvince, setIsProvince] = useState(true);
@@ -17,6 +18,9 @@ export default function Form({ setForm, formState }) {
       return;
     }
   }, []);
+  useEffect(() => {
+    setForm({ ...formState, province: provinces[0] });
+  }, [provinces]);
   const inputHandler = (e) => {
     console.log(formState);
     if (e.target.name === "population") {
@@ -36,6 +40,7 @@ export default function Form({ setForm, formState }) {
           ...formState,
           [e.target.name]: result,
         });
+
         return;
       }
 
@@ -51,7 +56,7 @@ export default function Form({ setForm, formState }) {
         let temp = e.target.value.split("");
         temp.pop();
         console.log(temp.join(""));
-        setForm({ ...formState, [e.target.name]: temp.join("") });
+        setForm({ ...formState, province: temp.join("") });
         return;
       }
     }
@@ -70,6 +75,7 @@ export default function Form({ setForm, formState }) {
     setForm({ ...formState, [e.target.name]: e.target.value });
   };
   const submitHandler = () => {
+    setList([...list, formState]);
     navigate("/preview");
   };
   return (
@@ -135,7 +141,11 @@ export default function Form({ setForm, formState }) {
               {provinces &&
                 provinces.map((province, i) => {
                   return (
-                    <option key={i} value={province}>
+                    <option
+                      key={i}
+                      selected={i === 0 ? true : false}
+                      value={province}
+                    >
                       {province}
                     </option>
                   );
@@ -196,6 +206,20 @@ export default function Form({ setForm, formState }) {
               })}
             </select>
           </div>
+          <div className="col-lg-6">
+            <label htmlFor="provnum" className="form-label">
+              İlçe Sayısı
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              name="provnum"
+              id="provnum"
+              required
+              onChange={inputHandler}
+              value={formState.provnum}
+            />
+          </div>
           <div className="Col-lg-6 d-flex justify-content-center">
             <button type="submit" className="btn btn-primary">
               Devam
@@ -205,8 +229,8 @@ export default function Form({ setForm, formState }) {
       </div>
       <div className="col-12 p-0 align-self-end">
         <aside className="ms-4">
-          <p>Kullanıcı Adı: {loginInfo.id}</p>
-          <p>Giriş Tarihi: {loginInfo.time}</p>
+          <p>Kullanıcı Adı: {loginInfo?.id}</p>
+          <p>Giriş Tarihi: {loginInfo?.time}</p>
         </aside>
       </div>
     </main>
